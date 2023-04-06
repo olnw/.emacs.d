@@ -64,6 +64,10 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Use apps key as Super
+(setq w32-pass-apps-to-system nil)
+(setq w32-apps-modifier 'super)
+
 (defun xah/new-empty-buffer ()
   "Create a new empty buffer.
 New buffer will be named “untitled” or “untitled<2>”, “untitled<3>”, etc.
@@ -181,10 +185,10 @@ Version 2017-11-01"
 
 (use-package multiple-cursors
   :bind
-  ("s-u" . mc/edit-lines)
-  ("s-i" . mc/mark-previous-like-this)
-  ("s-o" . mc/mark-next-like-this)
-  ("s-p" . mc/mark-all-like-this))
+  ("s-1" . mc/edit-lines)
+  ("s-2" . mc/mark-previous-like-this)
+  ("s-3" . mc/mark-next-like-this)
+  ("s-4" . mc/mark-all-like-this))
 
 ;; Incremental search compatible with multiple-cursors
 (use-package phi-search)
