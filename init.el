@@ -179,6 +179,35 @@ Version 2017-11-01"
 
 ;;; Packages
 
+(use-package multiple-cursors
+  :bind
+  ("s-u" . mc/edit-lines)
+  ("s-i" . mc/mark-previous-like-this)
+  ("s-o" . mc/mark-next-like-this)
+  ("s-p" . mc/mark-all-like-this))
+
+;; Incremental search compatible with multiple-cursors
+(use-package phi-search)
+
+;; Idea from https://xenodium.com/emacs-dwim-swiper-vs-isearch-vs-phi-search/
+(defun olnw-forward-isearch-dwim ()
+  (interactive)
+  (cond ((and (fboundp #'phi-search)
+              (bound-and-true-p multiple-cursors-mode))
+         (call-interactively #'phi-search))
+        (t (call-interactively #'isearch-forward))))
+
+(defun olnw-backward-isearch-dwim ()
+  (interactive)
+  (cond ((and (fboundp #'phi-search-backward)
+              (bound-and-true-p multiple-cursors-mode))
+         (call-interactively #'phi-search-backward))
+        (t (call-interactively #'isearch-backward))))
+
+(define-key global-map [remap isearch-forward] #'olnw-forward-isearch-dwim)
+
+(define-key global-map [remap isearch-backward] #'olnw-backward-isearch-dwim)
+
 (use-package smartparens
   :demand t
 
