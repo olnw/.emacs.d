@@ -285,6 +285,15 @@ Version 2017-11-01"
       (corfu-mode 1)))
   (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1))
 
+(use-package corfu-terminal
+  :init
+  (unless (package-installed-p 'corfu-terminal)
+    (package-vc-install "https://codeberg.org/akib/emacs-corfu-terminal.git"))
+
+  :config
+  (unless (display-graphic-p)
+    (corfu-terminal-mode 1)))
+
 (use-package consult
   ;; Replace bindings. Lazily loaded by use-package.
   :bind (;; C-c bindings (mode-specific-map)
