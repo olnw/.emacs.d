@@ -246,6 +246,10 @@ Version 2017-11-01"
 
 (use-package expand-region :bind ("M-h" . er/expand-region))
 
+(use-package cape
+  :init
+  (add-to-list 'completion-at-point-functions #'cape-file))
+
 (use-package vertico :init (vertico-mode 1))
 
 (use-package marginalia :init (marginalia-mode 1))
@@ -255,7 +259,6 @@ Version 2017-11-01"
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
-;; dabbrev-completion works with Corfu.
 (use-package dabbrev
   :ensure nil
   ;; Swap M-/ and C-M-/
@@ -264,35 +267,6 @@ Version 2017-11-01"
   ;; Other useful Dabbrev configurations.
   :custom
   (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
-
-(use-package corfu
-  :custom
-  (corfu-cycle t) ; Enable cycling for `corfu-next/previous'
-  (corfu-auto t) ; Enable auto completion
-  (corfu-quit-no-match 'separator)
-
-  :init
-  (global-corfu-mode)
-
-  (defun corfu-enable-always-in-minibuffer ()
-    "Enable Corfu in the minibuffer if Vertico/Mct are not active."
-    (unless (or (bound-and-true-p mct--active)
-                (bound-and-true-p vertico--input)
-                (eq (current-local-map) read-passwd-map))
-      ;; (setq-local corfu-auto nil) ;; Enable/disable auto completion
-      (setq-local corfu-echo-delay nil ;; Disable automatic echo and popup
-                  corfu-popupinfo-delay nil)
-      (corfu-mode 1)))
-  (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1))
-
-(use-package corfu-terminal
-  :init
-  (unless (package-installed-p 'corfu-terminal)
-    (package-vc-install "https://codeberg.org/akib/emacs-corfu-terminal.git"))
-
-  :config
-  (unless (display-graphic-p)
-    (corfu-terminal-mode 1)))
 
 (use-package consult
   ;; Replace bindings. Lazily loaded by use-package.
@@ -353,12 +327,12 @@ Version 2017-11-01"
   :init
   ;; Use `consult-completion-in-region' if Vertico is enabled.
   ;; Otherwise use the default `completion--in-region' function.
-  ;; (setq completion-in-region-function
-  ;;       (lambda (&rest args)
-  ;;         (apply (if vertico-mode
-  ;;                    #'consult-completion-in-region
-  ;;                  #'completion--in-region)
-  ;;                args)))
+  (setq completion-in-region-function
+        (lambda (&rest args)
+          (apply (if vertico-mode
+                     #'consult-completion-in-region
+                   #'completion--in-region)
+                 args)))
 
   ;; Configure the register formatting. This improves the register
   ;; preview for 'consult-register', 'consult-register-load',
